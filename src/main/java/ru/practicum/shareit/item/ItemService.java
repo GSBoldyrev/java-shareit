@@ -47,7 +47,7 @@ public class ItemService {
     public Item update(Item item, long userId) {
         checkOwner(userId);
         Item itemToUpdate = repository.get(item.getId());
-        if(itemToUpdate.getOwnerId() != userId) {
+        if (itemToUpdate.getOwnerId() != userId) {
             throw new NotFoundException("У данного пользователя нет такой вещи!");
         }
         if (item.getName() != null) {
