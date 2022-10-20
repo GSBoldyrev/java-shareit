@@ -38,7 +38,7 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public List<Item> getAll() {
 
-        return items.values().stream().toList();
+        return new ArrayList<>(items.values());
     }
 
     @Override
