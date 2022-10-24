@@ -2,54 +2,58 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import ru.practicum.shareit.error.exception.ConflictException;
 import ru.practicum.shareit.error.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.UserService;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.item.ItemMapper.toItem;
+import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class ItemService {
 
     private final ItemRepository repository;
     private final UserService userService;
 
-    public Item getById(long itemId, long userId) {
-        checkOwner(userId);
+    public ItemDto getById(long itemId) {
+        Item item = repository.findById(itemId).
+                orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!"));
 
-        return repository.get(itemId);
+        return toItemDto(item);
     }
 
-    public List<Item> getAll(long userId) {
-        checkOwner(userId);
-        List<Item> result = new ArrayList<>();
-        for (Item i: repository.getAll()) {
-            if (i.getOwnerId() == userId) {
-                result.add(i);
-            }
-        }
-
-        return result;
+    public List<ItemDto> getAll(long userId) {
+        return repository.findAll().stream().
+                filter(item -> item.getOwnerId() == userId).
+                map(ItemMapper::toItemDto).
+                collect(Collectors.toList());
     }
 
-    public Item add(@Valid Item item, long userId) {
-        checkOwner(userId);
+    public ItemDto add(ItemDto itemDto, long userId) {
+        userService.getById(userId);
+        Item item = toItem(itemDto);
+        item.setOwnerId(userId);
 
-        return repository.add(item);
+        return toItemDto(repository.add(item));
     }
 
-    public Item update(Item item, long userId) {
-        checkOwner(userId);
-        Item itemToUpdate = repository.get(item.getId());
-        if (itemToUpdate.getOwnerId() != userId) {
-            throw new NotFoundException("У данного пользователя нет такой вещи!");
-        }
+    public ItemDto update(ItemDto itemDto, long userId) {
+        userService.getById(userId);
+        Item item = toItem(itemDto);
+        long id = item.getId();
+        Optional<Item> optionalItem = repository.findById(id).
+                filter(i -> i.getOwnerId() == userId);
+        Item itemToUpdate = optionalItem.
+                orElseThrow(() -> new NotFoundException("Вещь  " + id + " не найдена!"));
         if (item.getName() != null) {
             itemToUpdate.setName(item.getName());
         }
@@ -60,31 +64,29 @@ public class ItemService {
             itemToUpdate.setAvailable(item.getAvailable());
         }
 
-        return repository.update(itemToUpdate);
+        return toItemDto(repository.update(itemToUpdate));
     }
 
     public void delete(long itemId, long userId) {
-        checkOwner(userId);
-        repository.delete(itemId);
+        Optional<Item> optionalItem = repository.findById(itemId).
+                filter(i -> i.getOwnerId() == userId);
+        if (optionalItem.isPresent()) {
+            repository.delete(itemId);
+        } else {
+            throw new ConflictException("Это ведь не ваша вещь, чтоб ее удалять!");
+        }
     }
 
-    public List<Item> search(String text, long userId) {
-        checkOwner(userId);
+    public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
         String query = text.toLowerCase();
-        List<Item> result = repository.search(query);
-        if (result == null) {
+        List<Item> items = repository.search(query);
+        if (items.isEmpty()) {
             throw new NotFoundException("Искомая вещь не найдена!");
         }
 
-        return result;
-    }
-
-    private void checkOwner(long userId) {
-        if (userService.getById(userId) == null) {
-            throw new NotFoundException("Пользователь не найден!");
-        }
+        return items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 }

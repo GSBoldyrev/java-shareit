@@ -20,6 +20,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflict(final ConflictException e) {
         log.error("Conflict Exception", e);
+
         return new ErrorResponse("Conflict Exception", e.getMessage());
     }
 
@@ -27,6 +28,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
         log.error("Validation Exception", e);
+
         return new ErrorResponse("Validation Exception", e.getMessage());
     }
 
@@ -34,6 +36,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ConstraintViolationException e) {
         log.error("Validation Exception", e);
+
         return new ErrorResponse("Validation Exception", e.getMessage());
     }
 
@@ -41,6 +44,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
         log.error("Not found exception", e);
+
         return new ErrorResponse("Not found exception", e.getMessage());
     }
 
@@ -48,6 +52,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Throwable e) {
         log.error("Unknown exception", e);
+
         return new ErrorResponse("Unknown", e.getMessage());
     }
 }

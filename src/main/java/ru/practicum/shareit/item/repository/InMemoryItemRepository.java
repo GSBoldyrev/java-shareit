@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
+@Slf4j
 public class InMemoryItemRepository implements ItemRepository {
 
     private final Map<Long, Item> items = new HashMap<>();
@@ -18,6 +17,7 @@ public class InMemoryItemRepository implements ItemRepository {
     public Item add(Item item) {
         item.setId(generateId());
         items.put(item.getId(), item);
+        log.info("Вещь {} успешно добавлена!", item.getName());
 
         return item;
     }
@@ -25,25 +25,26 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Item update(Item item) {
         items.put(item.getId(), item);
+        log.info("Вещь {} успешно обновлена!", item.getName());
 
         return item;
     }
 
     @Override
-    public Item get(long itemId) {
-
-        return items.get(itemId);
+    public Optional<Item> findById(long itemId) {
+        return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
-    public List<Item> getAll() {
-
+    public List<Item> findAll() {
         return new ArrayList<>(items.values());
     }
 
     @Override
     public void delete(long itemId) {
-        items.remove(itemId);
+        Item item = items.remove(itemId);
+        log.info("Вещь {} успешно удалена!", item.getName());
+
     }
 
     @Override

@@ -1,15 +1,16 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.misc.Marker;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
+import javax.validation.Valid;
 import java.util.List;
 
-import static ru.practicum.shareit.user.UserMapper.toUser;
-
 @RestController
+@Validated
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -17,29 +18,25 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/{userId}")
-    public User getById(@PathVariable long userId) {
-
+    public UserDto getById(@PathVariable long userId) {
         return service.getById(userId);
     }
 
     @GetMapping
-    public List<User> getUsers() {
-
+    public List<UserDto> getUsers() {
         return service.getAll();
     }
 
     @PostMapping
-    public User createUser(@RequestBody UserDto userDto) {
-
-        return service.add(toUser(userDto));
+    @Validated({Marker.OnCreate.class})
+    public UserDto createUser(@RequestBody @Valid UserDto userDto) {
+        return service.add(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@PathVariable long userId, @RequestBody UserDto userDto) {
-        User user = toUser(userDto);
-        user.setId(userId);
-
-        return service.update(user);
+    @Validated({Marker.OnUpdate.class})
+    public UserDto updateUser(@PathVariable long userId, @RequestBody @Valid UserDto userDto) {
+        return service.update(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
