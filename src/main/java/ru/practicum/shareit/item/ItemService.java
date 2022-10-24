@@ -25,17 +25,17 @@ public class ItemService {
     private final UserService userService;
 
     public ItemDto getById(long itemId) {
-        Item item = repository.findById(itemId).
-                orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!"));
+        Item item = repository.findById(itemId)
+                        .orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!"));
 
         return toItemDto(item);
     }
 
     public List<ItemDto> getAll(long userId) {
-        return repository.findAll().stream().
-                filter(item -> item.getOwnerId() == userId).
-                map(ItemMapper::toItemDto).
-                collect(Collectors.toList());
+        return repository.findAll().stream()
+                        .filter(item -> item.getOwnerId() == userId)
+                                .map(ItemMapper::toItemDto)
+                        .collect(Collectors.toList());
     }
 
     public ItemDto add(ItemDto itemDto, long userId) {
@@ -50,10 +50,10 @@ public class ItemService {
         userService.getById(userId);
         Item item = toItem(itemDto);
         long id = item.getId();
-        Optional<Item> optionalItem = repository.findById(id).
-                filter(i -> i.getOwnerId() == userId);
-        Item itemToUpdate = optionalItem.
-                orElseThrow(() -> new NotFoundException("Вещь  " + id + " не найдена!"));
+        Optional<Item> optionalItem = repository.findById(id)
+                        .filter(i -> i.getOwnerId() == userId);
+        Item itemToUpdate = optionalItem
+                .orElseThrow(() -> new NotFoundException("Вещь  " + id + " не найдена!"));
         if (item.getName() != null) {
             itemToUpdate.setName(item.getName());
         }
@@ -68,8 +68,8 @@ public class ItemService {
     }
 
     public void delete(long itemId, long userId) {
-        Optional<Item> optionalItem = repository.findById(itemId).
-                filter(i -> i.getOwnerId() == userId);
+        Optional<Item> optionalItem = repository.findById(itemId)
+                        .filter(i -> i.getOwnerId() == userId);
         if (optionalItem.isPresent()) {
             repository.delete(itemId);
         } else {

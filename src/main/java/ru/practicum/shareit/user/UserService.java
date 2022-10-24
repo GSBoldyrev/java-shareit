@@ -30,8 +30,8 @@ public class UserService {
 
     public UserDto update(UserDto userDto, long id) {
         Optional<User> optionalUser = repository.findById(id);
-        User userToUpdate = optionalUser.
-                orElseThrow(() -> new NotFoundException("Пользователь по ID " + id + " не найден!"));
+        User userToUpdate = optionalUser
+                .orElseThrow(() -> new NotFoundException("Пользователь по ID " + id + " не найден!"));
         User user = toUser(userDto);
         if (user.getName() != null) {
             userToUpdate.setName(user.getName());
@@ -50,16 +50,16 @@ public class UserService {
 
     public UserDto getById(long id) {
         Optional<User> optionalUser = repository.findById(id);
-        User user = optionalUser.
-                orElseThrow(() -> new NotFoundException("Пользователь по ID " + id + " не найден!"));
+        User user = optionalUser
+                .orElseThrow(() -> new NotFoundException("Пользователь по ID " + id + " не найден!"));
 
         return toUserDto(user);
     }
 
     public List<UserDto> getAll() {
-        return repository.findAll().stream().
-                map(UserMapper::toUserDto).
-                collect(Collectors.toList());
+        return repository.findAll().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     private void checkEmail(User user) {
