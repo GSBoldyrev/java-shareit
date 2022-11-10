@@ -37,7 +37,7 @@ public class BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!"));
         Item item = itemRepository.findById(bookingDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("Вещь " + bookingDto.getItemId() + " не найдена!"));
+                .orElseThrow(() -> new NotFoundException("Вещь по ID" + bookingDto.getItemId() + " не найдена!"));
         if (userId == item.getOwnerId()) {
             throw new NotFoundException("Собрались бронировать собственную вещь?");
         }
@@ -70,14 +70,13 @@ public class BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        bookingRepository.save(booking);
 
-        return toBookingDto(booking);
+        return toBookingDto(bookingRepository.save(booking));
     }
 
     public BookingDtoOutcome get(long userId, long bookingId) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
-        Booking booking = optionalBooking.orElseThrow(() -> new NotFoundException("Бронирование на найдено!"));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронирование на найдено!"));
         if (userId != booking.getBooker().getId() && userId != booking.getItem().getOwnerId()) {
             throw new NotFoundException("Бронирование к вам не относится.");
         }
@@ -89,72 +88,16 @@ public class BookingService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден");
         }
-        Stream<BookingDtoOutcome> allBookings = bookingRepository.findAllByBookerIdOrderByIdDesc(userId).stream()
-                .map(BookingMapper::toBookingDto);
 
-        switch (state) {
-            case "PAST":
-                return allBookings
-                        .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "FUTURE":
-                return allBookings
-                        .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "CURRENT":
-                return allBookings
-                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
-                        .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "WAITING":
-                return allBookings
-                        .filter(b -> b.getStatus().equals(Status.WAITING))
-                        .collect(Collectors.toList());
-            case "REJECTED":
-                return allBookings
-                        .filter(b -> b.getStatus().equals(Status.REJECTED))
-                        .collect(Collectors.toList());
-            case "ALL":
-                return allBookings.collect(Collectors.toList());
-            default:
-                throw new BadRequestException("Unknown state: " + state);
-        }
+        return filterByState(bookingRepository.findAllByBookerIdOrderByIdDesc(userId), state);
     }
 
     public List<BookingDtoOutcome> getForOwner(long userId, String state) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден");
         }
-        Stream<BookingDtoOutcome> allBookings = bookingRepository.findAllByOwner(userId).stream()
-                .map(BookingMapper::toBookingDto);
 
-        switch (state) {
-            case "PAST":
-                return allBookings
-                        .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "FUTURE":
-                return allBookings
-                        .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "CURRENT":
-                return allBookings
-                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
-                        .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
-                        .collect(Collectors.toList());
-            case "WAITING":
-                return allBookings
-                        .filter(b -> b.getStatus().equals(Status.WAITING))
-                        .collect(Collectors.toList());
-            case "REJECTED":
-                return allBookings
-                        .filter(b -> b.getStatus().equals(Status.REJECTED))
-                        .collect(Collectors.toList());
-            case "ALL":
-                return allBookings.collect(Collectors.toList());
-            default:
-                throw new BadRequestException("Unknown state: " + state.toString());
-        }
+        return filterByState(bookingRepository.findAllByOwner(userId), state);
     }
 
     public BookingDtoShort getNextBookingForItem(long itemId) {
@@ -175,5 +118,35 @@ public class BookingService {
         return lastBooking.orElse(null);
     }
 
-
+    private List<BookingDtoOutcome> filterByState(List<Booking> bookings, String state) {
+        Stream<BookingDtoOutcome> toFilter = bookings.stream()
+                .map(BookingMapper::toBookingDto);
+        switch (state) {
+            case "PAST":
+                return toFilter
+                        .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            case "FUTURE":
+                return toFilter
+                        .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            case "CURRENT":
+                return toFilter
+                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
+                        .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            case "WAITING":
+                return toFilter
+                        .filter(b -> b.getStatus().equals(Status.WAITING))
+                        .collect(Collectors.toList());
+            case "REJECTED":
+                return toFilter
+                        .filter(b -> b.getStatus().equals(Status.REJECTED))
+                        .collect(Collectors.toList());
+            case "ALL":
+                return toFilter.collect(Collectors.toList());
+            default:
+                throw new BadRequestException("Unknown state: " + state);
+        }
+    }
 }

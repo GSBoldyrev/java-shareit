@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.user.UserMapper.toUser;
@@ -27,8 +26,7 @@ public class UserService {
     }
 
     public UserDto update(UserDto userDto, long id) {
-        Optional<User> optionalUser = repository.findById(id);
-        User userToUpdate = optionalUser
+        User userToUpdate = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь по ID " + id + " не найден!"));
         User user = toUser(userDto);
         if (user.getName() != null) {

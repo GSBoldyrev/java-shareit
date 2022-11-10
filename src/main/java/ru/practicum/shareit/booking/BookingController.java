@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoIncome;
 import ru.practicum.shareit.booking.dto.BookingDtoOutcome;
 import ru.practicum.shareit.misc.Marker;
-import ru.practicum.shareit.misc.State;
 
 import javax.validation.Valid;
 import java.util.List;

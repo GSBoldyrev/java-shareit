@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -25,8 +27,4 @@ public class Comment {
     @JoinColumn(name = "item_id")
     private Item item;
     private LocalDateTime created;
-
-    public Comment() {
-
-    }
 }

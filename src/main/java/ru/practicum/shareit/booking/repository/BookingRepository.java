@@ -12,9 +12,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemId(Long itemId);
 
-
     @Query(value = "select * from bookings where item_id in (select id from items where owner_id = ?1) order by id desc", nativeQuery = true)
     List<Booking> findAllByOwner(Long ownerId);
-
-
 }

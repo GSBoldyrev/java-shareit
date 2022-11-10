@@ -22,7 +22,7 @@ public class ErrorHandler {
     public ErrorResponse handleConflict(final ConflictException e) {
         log.error("Conflict Exception", e);
 
-        return new ErrorResponse("Conflict Exception", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Conflict Exception");
     }
 
     @ExceptionHandler
@@ -30,7 +30,7 @@ public class ErrorHandler {
     public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
         log.error("Validation Exception", e);
 
-        return new ErrorResponse("Validation Exception", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Validation Exception");
     }
 
     @ExceptionHandler
@@ -38,7 +38,7 @@ public class ErrorHandler {
     public ErrorResponse handleValidationException(final ConstraintViolationException e) {
         log.error("Validation Exception", e);
 
-        return new ErrorResponse("Validation Exception", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Validation Exception");
     }
 
     @ExceptionHandler
@@ -46,7 +46,7 @@ public class ErrorHandler {
     public ErrorResponse handleNotFound(final NotFoundException e) {
         log.error("Not found exception", e);
 
-        return new ErrorResponse("Not found exception", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Not found exception");
     }
 
     @ExceptionHandler
@@ -62,6 +62,6 @@ public class ErrorHandler {
     public ErrorResponse handleException(final Throwable e) {
         log.error("Unknown exception", e);
 
-        return new ErrorResponse("Unknown", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Unknown");
     }
 }

@@ -15,7 +15,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -39,31 +39,21 @@ public class ItemService {
     public ItemDto getById(long itemId, long userId) {
         Item item = repository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!"));
-        List<CommentDto> comments = commentRepository.findAllByItemId(itemId).stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
+        ItemDto result = toItemDto(item);
+        populateItemDto(result);
         if (item.getOwnerId() != userId) {
-            return toItemDto(item, null, null, comments);
-        }
-        BookingDtoShort lastBooking = bookingService.getLastBookingForItem(itemId);
-        BookingDtoShort nextBooking = bookingService.getNextBookingForItem(itemId);
-
-        return toItemDto(item, lastBooking, nextBooking, comments);
-    }
-
-    public List<ItemDto> getAll(long userId) {
-        List<Item> items = repository.findAllByOwnerId(userId);
-        List<ItemDto> result = new ArrayList<>();
-        for (Item item : items) {
-            BookingDtoShort lastBooking = bookingService.getLastBookingForItem(item.getId());
-            BookingDtoShort nextBooking = bookingService.getNextBookingForItem(item.getId());
-            List<CommentDto> comments = commentRepository.findAllByItemId(item.getId()).stream()
-                    .map(CommentMapper::toCommentDto)
-                    .collect(Collectors.toList());
-            result.add(toItemDto(item, lastBooking, nextBooking, comments));
+            result.setLastBooking(null);
+            result.setNextBooking(null);
         }
 
         return result;
+    }
+
+    public List<ItemDto> getAll(long userId) {
+        return repository.findAllByOwnerId(userId).stream()
+                .map(ItemMapper::toItemDto)
+                .peek(this::populateItemDto)
+                .collect(Collectors.toList());
     }
 
     public ItemDtoShort add(ItemDto itemDto, long userId) {
@@ -81,11 +71,9 @@ public class ItemService {
             throw new NotFoundException("Пользователь не найден");
         }
         Item item = toItem(itemDto);
-        long id = item.getId();
-        Optional<Item> optionalItem = repository.findById(id)
-                .filter(i -> i.getOwnerId() == userId);
-        Item itemToUpdate = optionalItem
-                .orElseThrow(() -> new NotFoundException("Вещь  " + id + " не найдена!"));
+        Item itemToUpdate = repository.findById(item.getId())
+                .filter(i -> i.getOwnerId() == userId)
+                .orElseThrow(() -> new NotFoundException("Вещь  " + item.getId() + " не найдена!"));
         if (item.getName() != null) {
             itemToUpdate.setName(item.getName());
         }
@@ -119,10 +107,16 @@ public class ItemService {
             throw new NotFoundException("Искомая вещь не найдена!");
         }
 
-        return items.stream().map(ItemMapper::toItemDtoShort).collect(Collectors.toList());
+        return items.stream()
+                .map(ItemMapper::toItemDtoShort)
+                .collect(Collectors.toList());
     }
 
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!"));
+        Item item = repository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь по ID" + itemId + " не найдена!"));
         List<BookingDtoOutcome> bookings = bookingService.getForUser(userId, "PAST").stream()
                 .filter(b -> b.getItem().getId() == itemId)
                 .collect(Collectors.toList());
@@ -130,10 +124,20 @@ public class ItemService {
             throw new BadRequestException("Пользователь не может оставить отзыв об этой вещи");
         }
         Comment comment = toComment(commentDto);
-        comment.setAuthor(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!")));
-        comment.setItem(repository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!")));
-        commentRepository.save(comment);
+        comment.setAuthor(author);
+        comment.setItem(item);
 
-        return toCommentDto(comment);
+        return toCommentDto(commentRepository.save(comment));
+    }
+
+    private void populateItemDto(ItemDto dto) {
+        BookingDtoShort lastBooking = bookingService.getLastBookingForItem(dto.getId());
+        BookingDtoShort nextBooking = bookingService.getNextBookingForItem(dto.getId());
+        List<CommentDto> comments = commentRepository.findAllByItemId(dto.getId()).stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
+        dto.setLastBooking(lastBooking);
+        dto.setNextBooking(nextBooking);
+        dto.setComments(comments);
     }
 }
