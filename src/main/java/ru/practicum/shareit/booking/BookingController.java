@@ -22,8 +22,8 @@ public class BookingController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     public BookingDtoOutcome addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                        @RequestBody @Valid BookingDtoIncome BookingDto) {
-        return service.add(BookingDto, userId);
+                                        @RequestBody @Valid BookingDtoIncome bookingDto) {
+        return service.add(bookingDto, userId);
     }
 
     @PatchMapping("/{bookingId}")

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.booking.dto.BookingDtoOutcome;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.misc.Marker;
 
