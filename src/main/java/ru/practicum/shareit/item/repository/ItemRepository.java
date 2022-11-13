@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @Query(value = "select * from items " +
-            "where available = true and " +
-            "(lower(name) like '%' || ?1 || '%' or lower(description) like '%' || ?1 || '%')",
+    @Query(value = "SELECT * FROM items " +
+            "WHERE available = TRUE AND " +
+            "(LOWER(name) LIKE '%' || ?1 || '%' OR LOWER(description) LIKE '%' || ?1 || '%')",
             nativeQuery = true)
     List<Item> search(String search);
 

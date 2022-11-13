@@ -19,9 +19,9 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime start;
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime end;
     @ManyToOne
     @JoinColumn(name = "item_id")
@@ -29,6 +29,6 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "booker_id")
     private User booker;
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     private Status status;
 }

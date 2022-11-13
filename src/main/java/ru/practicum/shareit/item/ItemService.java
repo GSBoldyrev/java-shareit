@@ -31,13 +31,13 @@ import static ru.practicum.shareit.item.ItemMapper.*;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final ItemRepository repository;
+    private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BookingService bookingService;
 
     public ItemDto getById(long itemId, long userId) {
-        Item item = repository.findById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь " + itemId + " не найдена!"));
         ItemDto result = toItemDto(item);
         populateItemDto(result);
@@ -50,7 +50,7 @@ public class ItemService {
     }
 
     public List<ItemDto> getAll(long userId) {
-        return repository.findAllByOwnerId(userId).stream()
+        return itemRepository.findAllByOwnerId(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .peek(this::populateItemDto)
                 .collect(Collectors.toList());
@@ -63,7 +63,7 @@ public class ItemService {
         Item item = toItem(itemDto);
         item.setOwnerId(userId);
 
-        return toItemDtoShort(repository.save(item));
+        return toItemDtoShort(itemRepository.save(item));
     }
 
     public ItemDtoShort update(ItemDto itemDto, long userId) {
@@ -71,7 +71,7 @@ public class ItemService {
             throw new NotFoundException("Пользователь не найден");
         }
         Item item = toItem(itemDto);
-        Item itemToUpdate = repository.findById(item.getId())
+        Item itemToUpdate = itemRepository.findById(item.getId())
                 .filter(i -> i.getOwnerId() == userId)
                 .orElseThrow(() -> new NotFoundException("Вещь  " + item.getId() + " не найдена!"));
         if (item.getName() != null) {
@@ -84,14 +84,14 @@ public class ItemService {
             itemToUpdate.setAvailable(item.getAvailable());
         }
 
-        return toItemDtoShort(repository.save(itemToUpdate));
+        return toItemDtoShort(itemRepository.save(itemToUpdate));
     }
 
     public void delete(long itemId, long userId) {
-        Optional<Item> optionalItem = repository.findById(itemId)
+        Optional<Item> optionalItem = itemRepository.findById(itemId)
                 .filter(i -> i.getOwnerId() == userId);
         if (optionalItem.isPresent()) {
-            repository.deleteById(itemId);
+            itemRepository.deleteById(itemId);
         } else {
             throw new ConflictException("Это ведь не ваша вещь, чтоб ее удалять!");
         }
@@ -102,7 +102,7 @@ public class ItemService {
             return new ArrayList<>();
         }
         String query = text.toLowerCase();
-        List<Item> items = repository.search(query);
+        List<Item> items = itemRepository.search(query);
         if (items.isEmpty()) {
             throw new NotFoundException("Искомая вещь не найдена!");
         }
@@ -115,7 +115,7 @@ public class ItemService {
     public CommentDto addComment(CommentDto commentDto, long itemId, long userId) {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!"));
-        Item item = repository.findById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь по ID" + itemId + " не найдена!"));
         List<BookingDtoOutcome> bookings = bookingService.getForUser(userId, "PAST").stream()
                 .filter(b -> b.getItem().getId() == itemId)
