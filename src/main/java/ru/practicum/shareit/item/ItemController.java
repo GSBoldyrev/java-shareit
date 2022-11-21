@@ -3,7 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoShort;
 import ru.practicum.shareit.misc.Marker;
 
 import javax.validation.Valid;
@@ -23,27 +25,27 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable long itemId) {
-        return service.getById(itemId);
+    public ItemDto getById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        return service.getById(itemId, userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam String text) {
+    public List<ItemDtoShort> searchItem(@RequestParam String text) {
         return service.search(text);
     }
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                           @RequestBody @Valid ItemDto itemDto) {
+    public ItemDtoShort addItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                @RequestBody @Valid ItemDto itemDto) {
         return service.add(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     @Validated({Marker.OnUpdate.class})
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                              @PathVariable long itemId,
-                              @RequestBody @Valid ItemDto itemDto) {
+    public ItemDtoShort updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                   @PathVariable long itemId,
+                                   @RequestBody @Valid ItemDto itemDto) {
         itemDto.setId(itemId);
 
         return service.update(itemDto, userId);
@@ -53,5 +55,13 @@ public class ItemController {
     public void deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
                            @PathVariable long itemId) {
         service.delete(itemId, userId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @Validated
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                 @PathVariable long itemId,
+                                 @RequestBody @Valid CommentDto commentDto) {
+        return service.addComment(commentDto, itemId, userId);
     }
 }
