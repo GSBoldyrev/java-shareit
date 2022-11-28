@@ -62,7 +62,9 @@ public class ItemRequestService {
     public List<ItemRequestDtoFull> getAll(Long userId, int from, int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("created").ascending());
 
-        return requestRepository.findAllByRequestorIdIsNot(userId, page).stream().map(this::getRequestDto).collect(Collectors.toList());
+        return requestRepository.findAllByRequestorIdIsNot(userId, page).stream()
+                .map(this::getRequestDto)
+                .collect(Collectors.toList());
     }
 
     private ItemRequestDtoFull getRequestDto(ItemRequest request) {

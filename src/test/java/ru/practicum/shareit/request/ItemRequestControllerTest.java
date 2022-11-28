@@ -100,7 +100,8 @@ class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("addRequest.requestDto.description: must not be blank")))
+                .andExpect(jsonPath("$.error",
+                        is("addRequest.requestDto.description: must not be blank")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -108,8 +109,7 @@ class ItemRequestControllerTest {
 
     @Test
     void getForAuthorWithStatusOk() throws Exception {
-        when(service.getForAuthor(1L))
-                .thenReturn(List.of(full1, full2));
+        when(service.getForAuthor(1L)).thenReturn(List.of(full1, full2));
 
         mvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", 1L))
@@ -174,8 +174,7 @@ class ItemRequestControllerTest {
 
     @Test
     void getByIdWithStatusOk() throws Exception {
-        when(service.getById(1L, 2L))
-                .thenReturn(full1);
+        when(service.getById(1L, 2L)).thenReturn(full1);
 
         mvc.perform(get("/requests/2")
                         .header("X-Sharer-User-Id", 1L))

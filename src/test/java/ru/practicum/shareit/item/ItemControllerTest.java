@@ -101,8 +101,7 @@ class ItemControllerTest {
 
     @Test
     void getByIdWithStatusOk() throws Exception {
-        when(service.getById(anyLong(), anyLong()))
-                .thenReturn(dto1);
+        when(service.getById(anyLong(), anyLong())).thenReturn(dto1);
 
         mvc.perform(get("/items/2")
                         .header("X-Sharer-User-Id", 1L))
@@ -144,7 +143,8 @@ class ItemControllerTest {
     void searchItemWithWrongFromWithStatusBadRequest() throws Exception {
         mvc.perform(get("/items/search?text=Поиск&from=-2&size=2"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("searchItem.from: must be greater than or equal to 0")))
+                .andExpect(jsonPath("$.error",
+                        is("searchItem.from: must be greater than or equal to 0")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -154,7 +154,8 @@ class ItemControllerTest {
     void searchItemWithWrongSizeWithStatusBadRequest() throws Exception {
         mvc.perform(get("/items/search?text=Поиск&from=2&size=0"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("searchItem.size: must be greater than or equal to 1")))
+                .andExpect(jsonPath("$.error",
+                        is("searchItem.size: must be greater than or equal to 1")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -164,7 +165,8 @@ class ItemControllerTest {
     void searchItemWithoutSearchWithStatusInternalServerError() throws Exception {
         mvc.perform(get("/items/search?from=2&size=2"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.error", is("Required request parameter 'text' for method parameter type String is not present")))
+                .andExpect(jsonPath("$.error",
+                        is("Required request parameter 'text' for method parameter type String is not present")))
                 .andExpect(jsonPath("$.description", is("Unknown")));
 
         verifyNoInteractions(service);
@@ -221,7 +223,14 @@ class ItemControllerTest {
 
     @Test
     void addItemWithoutNameAndStatusBadRequest() throws Exception {
-        ItemDto noName = new ItemDto(1L, null, "description", true, 2L, null, null, null);
+        ItemDto noName = new ItemDto(1L,
+                null,
+                "description",
+                true,
+                2L,
+                null,
+                null,
+                null);
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noName))
@@ -238,7 +247,14 @@ class ItemControllerTest {
 
     @Test
     void addItemWithoutDescriptionAndStatusBadRequest() throws Exception {
-        ItemDto noDescription = new ItemDto(1L, "name", null, true, 2L, null, null, null);
+        ItemDto noDescription = new ItemDto(1L,
+                "name",
+                null,
+                true,
+                2L,
+                null,
+                null,
+                null);
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noDescription))
@@ -255,7 +271,14 @@ class ItemControllerTest {
 
     @Test
     void addItemWithoutAvailableAndStatusBadRequest() throws Exception {
-        ItemDto noAvailable = new ItemDto(1L, "name", "description", null, 2L, null, null, null);
+        ItemDto noAvailable = new ItemDto(1L,
+                "name",
+                "description",
+                null,
+                2L,
+                null,
+                null,
+                null);
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noAvailable))

@@ -33,7 +33,8 @@ class ItemRequestServiceIntegrationTest {
     void add() {
         service.add(request, 1L);
 
-        TypedQuery<ItemRequest> query = em.createQuery("SELECT i FROM ItemRequest i WHERE i.description = :description", ItemRequest.class);
+        TypedQuery<ItemRequest> query = em
+                .createQuery("SELECT i FROM ItemRequest i WHERE i.description = :description", ItemRequest.class);
         ItemRequest checkedRequest = query
                 .setParameter("description", request.getDescription())
                 .getSingleResult();

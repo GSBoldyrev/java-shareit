@@ -82,8 +82,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithStatusOk() throws Exception {
-        when(service.add(any()))
-                .thenReturn(dto1);
+        when(service.add(any())).thenReturn(dto1);
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(dto1))
@@ -140,7 +139,8 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("createUser.userDto.email: must be a well-formed email address")))
+                .andExpect(jsonPath("$.error",
+                        is("createUser.userDto.email: must be a well-formed email address")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -150,8 +150,7 @@ class UserControllerTest {
     void updateUserWithStatusOk() throws Exception {
         UserDto validDto = new UserDto(null, "Alfa", "alfa@yandex.ru");
 
-        when(service.update(validDto, 1L))
-                .thenReturn(dto1);
+        when(service.update(validDto, 1L)).thenReturn(dto1);
 
         mvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(validDto))

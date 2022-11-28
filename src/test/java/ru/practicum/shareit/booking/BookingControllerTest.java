@@ -43,9 +43,18 @@ class BookingControllerTest {
     private final LocalDateTime end = LocalDateTime.of(2045, 1, 1, 1, 1, 1);
     private final LocalDateTime past = LocalDateTime.of(2005, 1, 1, 1, 1, 1);
     private final BookingDtoIncome dtoIn = new BookingDtoIncome(start, end, 1L);
-    private final BookingDtoOutcome dtoOut1 = new BookingDtoOutcome(2L, null, null, null, null, WAITING);
-    private final BookingDtoOutcome dtoOut2 = new BookingDtoOutcome(3L, null, null, null, null, APPROVED);
-
+    private final BookingDtoOutcome dtoOut1 = new BookingDtoOutcome(2L,
+            null,
+            null,
+            null,
+            null,
+            WAITING);
+    private final BookingDtoOutcome dtoOut2 = new BookingDtoOutcome(3L,
+            null,
+            null,
+            null,
+            null,
+            APPROVED);
 
     @Test
     void addBookingWithStatusOk() throws Exception {
@@ -252,7 +261,8 @@ class BookingControllerTest {
         mvc.perform(get("/bookings?state=WAITING&from=-2&size=2")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("getBookingsForUser.from: must be greater than or equal to 0")))
+                .andExpect(jsonPath("$.error",
+                        is("getBookingsForUser.from: must be greater than or equal to 0")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -263,7 +273,8 @@ class BookingControllerTest {
         mvc.perform(get("/bookings?state=WAITING&from=2&size=0")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("getBookingsForUser.size: must be greater than or equal to 1")))
+                .andExpect(jsonPath("$.error",
+                        is("getBookingsForUser.size: must be greater than or equal to 1")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -281,7 +292,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.description", is("Bad request exception")));
 
         verify(service, times(1)).getForUser(1L, "WAITING", 2, 2);
-
     }
 
     @Test
@@ -296,9 +306,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.description", is("Not found exception")));
 
         verify(service, times(1)).getForUser(1L, "WAITING", 2, 2);
-
     }
-
 
     @Test
     void getBookingsForOwnerWithStatusOk() throws Exception {
@@ -313,7 +321,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$[1].status", is(dtoOut2.getStatus().name())));
 
         verify(service, times(1)).getForOwner(1L, "WAITING", 2, 2);
-
     }
 
     @Test
@@ -321,7 +328,8 @@ class BookingControllerTest {
         mvc.perform(get("/bookings/owner?state=WAITING&from=-2&size=2")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("getBookingsForOwner.from: must be greater than or equal to 0")))
+                .andExpect(jsonPath("$.error",
+                        is("getBookingsForOwner.from: must be greater than or equal to 0")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -332,7 +340,8 @@ class BookingControllerTest {
         mvc.perform(get("/bookings/owner?state=WAITING&from=2&size=0")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("getBookingsForOwner.size: must be greater than or equal to 1")))
+                .andExpect(jsonPath("$.error",
+                        is("getBookingsForOwner.size: must be greater than or equal to 1")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
 
         verifyNoInteractions(service);
@@ -350,7 +359,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.description", is("Bad request exception")));
 
         verify(service, times(1)).getForOwner(1L, "WAITING", 2, 2);
-
     }
 
     @Test
@@ -365,6 +373,5 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.description", is("Not found exception")));
 
         verify(service, times(1)).getForOwner(1L, "WAITING", 2, 2);
-
     }
 }
