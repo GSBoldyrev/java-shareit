@@ -226,7 +226,7 @@ class ItemServiceIntegrationTest {
 
     @Test
     void addComment() {
-        service.addComment(comment, 2L, 2L);
+        service.addComment(comment, 1L, 2L);
 
         TypedQuery<Comment> query = em.createQuery("SELECT c FROM Comment c WHERE c.text = :text", Comment.class);
         Comment checkedComment = query
@@ -235,7 +235,7 @@ class ItemServiceIntegrationTest {
 
         assertThat(checkedComment.getText(), equalTo("Отказали!"));
         assertThat(checkedComment.getAuthor().getId(), equalTo(2L));
-        assertThat(checkedComment.getItem().getId(), equalTo(2L));
+        assertThat(checkedComment.getItem().getId(), equalTo(1L));
     }
 
     @Test
