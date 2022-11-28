@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.dto.ItemDtoShort;
 import ru.practicum.shareit.misc.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -20,8 +21,10 @@ public class ItemController {
     private final ItemService service;
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return service.getAll(userId);
+    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                  @RequestParam(defaultValue = "0") @Min(0) int from,
+                                  @RequestParam(defaultValue = "100") @Min(1) int size) {
+        return service.getAll(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -30,8 +33,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDtoShort> searchItem(@RequestParam String text) {
-        return service.search(text);
+    public List<ItemDtoShort> searchItem(@RequestParam String text,
+                                         @RequestParam(defaultValue = "0") @Min(0) int from,
+                                         @RequestParam(defaultValue = "100") @Min(1) int size) {
+        return service.search(text, from, size);
     }
 
     @PostMapping

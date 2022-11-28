@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoIncome;
 import ru.practicum.shareit.booking.dto.BookingDtoOutcome;
@@ -34,7 +37,7 @@ public class BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!"));
         Item item = itemRepository.findById(bookingDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("Вещь по ID" + bookingDto.getItemId() + " не найдена!"));
+                .orElseThrow(() -> new NotFoundException("Вещь по ID " + bookingDto.getItemId() + " не найдена!"));
         if (userId == item.getOwnerId()) {
             throw new NotFoundException("Собрались бронировать собственную вещь?");
         }
@@ -81,31 +84,32 @@ public class BookingService {
         return toBookingDto(booking);
     }
 
-    public List<BookingDtoOutcome> getForUser(long userId, String state) {
+    public List<BookingDtoOutcome> getForUser(long userId, String state, int from, int size) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден");
         }
-        List<Booking> bookings;
+        Page<Booking> bookings;
+        Pageable page = PageRequest.of(from/size, size);
         switch (state) {
             case "PAST":
-                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByIdDesc(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByIdDesc(userId, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByIdDesc(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByIdDesc(userId, LocalDateTime.now(), page);
                 break;
             case "CURRENT":
                 bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdDesc(userId,
                         LocalDateTime.now(),
-                        LocalDateTime.now());
+                        LocalDateTime.now(), page);
                 break;
             case "ALL":
-                bookings = bookingRepository.findAllByBookerIdOrderByIdDesc(userId);
+                bookings = bookingRepository.findAllByBookerIdOrderByIdDesc(userId, page);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByIdDesc(userId, WAITING);
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByIdDesc(userId, WAITING, page);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByIdDesc(userId, REJECTED);
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByIdDesc(userId, REJECTED, page);
                 break;
             default:
                 throw new BadRequestException("Unknown state: " + state);
@@ -116,29 +120,30 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDtoOutcome> getForOwner(long userId, String state) {
+    public List<BookingDtoOutcome> getForOwner(long userId, String state, int from, int size) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден");
         }
-        List<Booking> bookings;
+        Page<Booking> bookings;
+        Pageable page = PageRequest.of(from/size, size);
         switch (state) {
             case "PAST":
-                bookings = bookingRepository.findAllByOwnerForPast(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerForPast(userId, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByOwnerForFuture(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerForFuture(userId, LocalDateTime.now(), page);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findAllByOwnerForCurrent(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerForCurrent(userId, LocalDateTime.now(), page);
                 break;
             case "ALL":
-                bookings = bookingRepository.findAllByOwner(userId);
+                bookings = bookingRepository.findAllByOwner(userId, page);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findAllByOwnerAndStatus(userId, WAITING.ordinal());
+                bookings = bookingRepository.findAllByOwnerAndStatus(userId, WAITING.ordinal(), page);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findAllByOwnerAndStatus(userId, REJECTED.ordinal());
+                bookings = bookingRepository.findAllByOwnerAndStatus(userId, REJECTED.ordinal(), page);
                 break;
             default:
                 throw new BadRequestException("Unknown state: " + state);

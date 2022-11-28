@@ -12,7 +12,7 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 null,
-                null);
+                itemDto.getRequestId());
     }
 
     public static ItemDto toItemDto(Item item) {
@@ -20,6 +20,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
+                item.getRequestId(),
                 null,
                 null,
                 null);
@@ -29,6 +30,7 @@ public class ItemMapper {
         return new ItemDtoShort(item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable());
+                item.getAvailable(),
+                item.getRequestId());
     }
 }
