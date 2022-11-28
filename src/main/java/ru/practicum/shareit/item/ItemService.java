@@ -54,7 +54,7 @@ public class ItemService {
     }
 
     public List<ItemDto> getAll(long userId, int from, int size) {
-        Pageable page = PageRequest.of(from/size, size, Sort.by("id").ascending());
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
         return itemRepository.findAllByOwnerId(userId, page).stream()
                 .map(ItemMapper::toItemDto)
@@ -108,7 +108,7 @@ public class ItemService {
             return new ArrayList<>();
         }
         String query = text.toLowerCase();
-        Pageable page = PageRequest.of(from/size, size, Sort.by("id").ascending());
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
         Page<Item> items = itemRepository.search(query, page);
         if (items.isEmpty()) {
             throw new NotFoundException("Искомая вещь не найдена!");

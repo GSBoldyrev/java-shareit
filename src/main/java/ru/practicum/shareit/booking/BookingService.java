@@ -89,7 +89,7 @@ public class BookingService {
             throw new NotFoundException("Пользователь не найден");
         }
         Page<Booking> bookings;
-        Pageable page = PageRequest.of(from/size, size);
+        Pageable page = PageRequest.of(from / size, size);
         switch (state) {
             case "PAST":
                 bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByIdDesc(userId, LocalDateTime.now(), page);
@@ -125,7 +125,7 @@ public class BookingService {
             throw new NotFoundException("Пользователь не найден");
         }
         Page<Booking> bookings;
-        Pageable page = PageRequest.of(from/size, size);
+        Pageable page = PageRequest.of(from / size, size);
         switch (state) {
             case "PAST":
                 bookings = bookingRepository.findAllByOwnerForPast(userId, LocalDateTime.now(), page);

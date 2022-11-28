@@ -203,7 +203,7 @@ class ItemServiceIntegrationTest {
 
     @Test
     void deleteFail() {
-        ConflictException e = assertThrows(ConflictException.class, ()->service.delete(1L, 2L));
+        ConflictException e = assertThrows(ConflictException.class, () -> service.delete(1L, 2L));
 
         assertThat(e.getMessage(), equalTo("Это ведь не ваша вещь, чтоб ее удалять!"));
     }
@@ -219,7 +219,7 @@ class ItemServiceIntegrationTest {
 
     @Test
     void searchFail() {
-        NotFoundException e = assertThrows(NotFoundException.class, ()->service.search("ббб", 2, 2));
+        NotFoundException e = assertThrows(NotFoundException.class, () -> service.search("ббб", 2, 2));
 
         assertThat(e.getMessage(), equalTo("Искомая вещь не найдена!"));
     }
@@ -240,21 +240,21 @@ class ItemServiceIntegrationTest {
 
     @Test
     void addCommentFailWrongItem() {
-        NotFoundException e = assertThrows(NotFoundException.class, ()->service.addComment(comment, 24L, 2L));
+        NotFoundException e = assertThrows(NotFoundException.class, () -> service.addComment(comment, 24L, 2L));
 
         assertThat(e.getMessage(), equalTo("Вещь по ID 24 не найдена!"));
     }
 
     @Test
     void addCommentFailWrongUser() {
-        NotFoundException e = assertThrows(NotFoundException.class, ()->service.addComment(comment, 2L, 25L));
+        NotFoundException e = assertThrows(NotFoundException.class, () -> service.addComment(comment, 2L, 25L));
 
         assertThat(e.getMessage(), equalTo("Пользователь по ID 25 не найден!"));
     }
 
     @Test
     void addCommentFailWrongBooking() {
-        BadRequestException e = assertThrows(BadRequestException.class, ()->service.addComment(comment, 2L, 1L));
+        BadRequestException e = assertThrows(BadRequestException.class, () -> service.addComment(comment, 2L, 1L));
 
         assertThat(e.getMessage(), equalTo("Пользователь не может оставить отзыв об этой вещи"));
     }
