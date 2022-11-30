@@ -47,7 +47,7 @@ class ItemRequestServiceIntegrationTest {
     void addFail() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.add(request, 117L));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 117 не найден"));
     }
 
     @Test
@@ -63,7 +63,7 @@ class ItemRequestServiceIntegrationTest {
     void getByIdFailWrongUser() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.getById(456L, 1L));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 456 не найден"));
     }
 
     @Test
@@ -86,7 +86,7 @@ class ItemRequestServiceIntegrationTest {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.getForAuthor(27L));
 
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 27 не найден"));
     }
 
     @Test

@@ -105,7 +105,7 @@ class BookingServiceIntegrationTest {
     void approveFailBookingNotFound() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.approve(1L, 41L, true));
-        assertThat(e.getMessage(), equalTo("Бронирование на найдено!"));
+        assertThat(e.getMessage(), equalTo("Бронирование по ID 41 не найдено!"));
     }
 
     @Test
@@ -135,7 +135,7 @@ class BookingServiceIntegrationTest {
     void getFailBookingNotFound() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.get(2L, 222L));
-        assertThat(e.getMessage(), equalTo("Бронирование на найдено!"));
+        assertThat(e.getMessage(), equalTo("Бронирование по ID 222 не найдено!"));
     }
 
     @Test
@@ -188,7 +188,7 @@ class BookingServiceIntegrationTest {
     void getForUserFailWrongUser() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.getForUser(134L, "ALL", 0, 2));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 134 не найден"));
     }
 
     @Test
@@ -234,7 +234,7 @@ class BookingServiceIntegrationTest {
     void getForOwnerFailWrongUser() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.getForOwner(134L, "ALL", 0, 2));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 134 не найден"));
     }
 
     @Test

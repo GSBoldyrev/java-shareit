@@ -111,7 +111,7 @@ class ItemServiceIntegrationTest {
     void addFail() {
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.add(item, 117L));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 117 не найден"));
     }
 
     @Test
@@ -174,7 +174,7 @@ class ItemServiceIntegrationTest {
         item.setId(1L);
         NotFoundException e = assertThrows(NotFoundException.class,
                 () -> service.update(item, 117L));
-        assertThat(e.getMessage(), equalTo("Пользователь не найден"));
+        assertThat(e.getMessage(), equalTo("Пользователь по ID 117 не найден"));
     }
 
     @Test
@@ -259,6 +259,6 @@ class ItemServiceIntegrationTest {
         BadRequestException e = assertThrows(BadRequestException.class,
                 () -> service.addComment(comment, 2L, 1L));
 
-        assertThat(e.getMessage(), equalTo("Пользователь не может оставить отзыв об этой вещи"));
+        assertThat(e.getMessage(), equalTo("Пользователь 1 не может оставить отзыв о вещи 2"));
     }
 }
