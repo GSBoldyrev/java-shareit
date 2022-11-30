@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,9 +86,9 @@ class UserControllerTest {
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(dto1))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dto1.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(dto1.getName())))
@@ -103,9 +103,9 @@ class UserControllerTest {
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(noName))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("createUser.userDto.name: must not be null")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
@@ -119,9 +119,9 @@ class UserControllerTest {
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(noEmail))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("createUser.userDto.email: must not be null")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
@@ -135,9 +135,9 @@ class UserControllerTest {
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(wrongEmail))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error",
                         is("createUser.userDto.email: must be a well-formed email address")))
@@ -154,9 +154,9 @@ class UserControllerTest {
 
         mvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(validDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dto1.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(dto1.getName())))
@@ -174,9 +174,9 @@ class UserControllerTest {
 
         mvc.perform(patch("/users/18")
                         .content(mapper.writeValueAsString(validDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Пользователь по ID 18 не найден!")))
                 .andExpect(jsonPath("$.description", is("Not found exception")));
@@ -190,9 +190,9 @@ class UserControllerTest {
 
         mvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(invalidDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("updateUser.userDto.id: must be null")))
                 .andExpect(jsonPath("$.description", is("Validation Exception")));

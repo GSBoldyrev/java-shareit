@@ -58,7 +58,7 @@ public class BookingService {
 
     public BookingDtoOutcome approve(long userId, long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Бронирование на найдено!"));
+                .orElseThrow(() -> new NotFoundException("Бронирование по ID " + bookingId + " не найдено!"));
         if (booking.getItem().getOwnerId() != userId) {
             throw new NotFoundException("Это не ваша вещь, вы не можете менять статус бронирования");
         }
@@ -76,7 +76,7 @@ public class BookingService {
 
     public BookingDtoOutcome get(long userId, long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Бронирование на найдено!"));
+                .orElseThrow(() -> new NotFoundException("Бронирование по ID " + bookingId + " не найдено!"));
         if (userId != booking.getBooker().getId() && userId != booking.getItem().getOwnerId()) {
             throw new NotFoundException("Бронирование к вам не относится.");
         }
@@ -86,7 +86,7 @@ public class BookingService {
 
     public List<BookingDtoOutcome> getForUser(long userId, String state, int from, int size) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Page<Booking> bookings;
         Pageable page = PageRequest.of(from / size, size);
@@ -126,7 +126,7 @@ public class BookingService {
 
     public List<BookingDtoOutcome> getForOwner(long userId, String state, int from, int size) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Page<Booking> bookings;
         Pageable page = PageRequest.of(from / size, size);

@@ -30,7 +30,7 @@ public class ItemRequestService {
 
     public ItemRequestDto add(ItemRequestDto dto, Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         ItemRequest request = toItemRequest(dto);
         request.setRequestorId(userId);
@@ -40,7 +40,7 @@ public class ItemRequestService {
 
     public ItemRequestDtoFull getById(Long userId, Long requestId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         ItemRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос " + requestId + " не найден!"));
@@ -50,7 +50,7 @@ public class ItemRequestService {
 
     public List<ItemRequestDtoFull> getForAuthor(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         List<ItemRequest> requests = requestRepository.findAllByRequestorId(userId);
 
@@ -60,6 +60,9 @@ public class ItemRequestService {
     }
 
     public List<ItemRequestDtoFull> getAll(Long userId, int from, int size) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
+        }
         Pageable page = PageRequest.of(from / size, size, Sort.by("created").ascending());
 
         return requestRepository.findAllByRequestorIdIsNot(userId, page).stream()

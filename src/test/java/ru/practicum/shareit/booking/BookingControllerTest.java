@@ -6,20 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDtoIncome;
 import ru.practicum.shareit.booking.dto.BookingDtoOutcome;
 import ru.practicum.shareit.error.exception.BadRequestException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,9 +63,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(dtoIn))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dtoOut1.getId()), Long.class))
@@ -80,9 +80,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(noStart))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addBooking.bookingDto.start: must be a future date")))
@@ -97,9 +97,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(noEnd))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addBooking.bookingDto.end: must be a future date")))
@@ -114,9 +114,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(noItem))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addBooking.bookingDto.itemId: must not be null")))
@@ -132,9 +132,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(dtoIn))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Тест!")))
@@ -150,9 +150,9 @@ class BookingControllerTest {
 
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(dtoIn))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("Тест!")))
@@ -167,9 +167,9 @@ class BookingControllerTest {
                 .thenReturn(dtoOut1);
 
         mvc.perform(patch("/bookings/2?approved=true")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dtoOut1.getId()), Long.class))
@@ -184,9 +184,9 @@ class BookingControllerTest {
                 .thenThrow(new BadRequestException("Тест!"));
 
         mvc.perform(patch("/bookings/2?approved=true")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("Тест!")))
@@ -201,9 +201,9 @@ class BookingControllerTest {
                 .thenThrow(new NotFoundException("Тест!"));
 
         mvc.perform(patch("/bookings/2?approved=true")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Тест!")))

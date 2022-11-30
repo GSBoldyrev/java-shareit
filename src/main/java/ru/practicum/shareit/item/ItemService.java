@@ -64,7 +64,7 @@ public class ItemService {
 
     public ItemDtoShort add(ItemDto itemDto, long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Item item = toItem(itemDto);
         item.setOwnerId(userId);
@@ -74,7 +74,7 @@ public class ItemService {
 
     public ItemDtoShort update(ItemDto itemDto, long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Item item = toItem(itemDto);
         Item itemToUpdate = itemRepository.findById(item.getId())
@@ -128,7 +128,7 @@ public class ItemService {
                 .filter(b -> b.getItem().getId() == itemId)
                 .collect(Collectors.toList());
         if (bookings.isEmpty()) {
-            throw new BadRequestException("Пользователь не может оставить отзыв об этой вещи");
+            throw new BadRequestException("Пользователь " + userId + " не может оставить отзыв о вещи " + itemId);
         }
         Comment comment = toComment(commentDto);
         comment.setAuthor(author);

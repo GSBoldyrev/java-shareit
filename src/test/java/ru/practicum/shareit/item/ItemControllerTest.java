@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.error.exception.BadRequestException;
 import ru.practicum.shareit.error.exception.ConflictException;
@@ -15,12 +14,13 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoShort;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -192,9 +192,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(dto1))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dtoShort.getId()), Long.class))
@@ -210,9 +210,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(dto1))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 29L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Пользователь не найден!")))
@@ -234,9 +234,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noName))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addItem.itemDto.name: must not be blank")))
@@ -258,9 +258,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noDescription))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addItem.itemDto.description: must not be blank")))
@@ -282,9 +282,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(noAvailable))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("addItem.itemDto.available: must not be null")))
@@ -300,9 +300,9 @@ class ItemControllerTest {
 
         mvc.perform(patch("/items/2")
                         .content(mapper.writeValueAsString(dto1))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(dtoShort.getId()), Long.class))
@@ -319,9 +319,9 @@ class ItemControllerTest {
 
         mvc.perform(patch("/items/2")
                         .content(mapper.writeValueAsString(dto1))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Тестовое исключение")))
@@ -360,9 +360,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/2/comment")
                         .content(mapper.writeValueAsString(commentDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(commentDto.getId()), Long.class))
@@ -377,9 +377,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/2/comment")
                         .content(mapper.writeValueAsString(noText))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.description", is("Validation Exception")));
@@ -394,9 +394,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/2/comment")
                         .content(mapper.writeValueAsString(commentDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Вещь не найдена!")))
@@ -412,9 +412,9 @@ class ItemControllerTest {
 
         mvc.perform(post("/items/2/comment")
                         .content(mapper.writeValueAsString(commentDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(UTF_8)
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("Пользователь не может оставить отзыв об этой вещи")))
