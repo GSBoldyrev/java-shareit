@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDtoOutcome;
@@ -49,8 +53,10 @@ public class ItemService {
         return result;
     }
 
-    public List<ItemDto> getAll(long userId) {
-        return itemRepository.findAllByOwnerId(userId).stream()
+    public List<ItemDto> getAll(long userId, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
+
+        return itemRepository.findAllByOwnerId(userId, page).stream()
                 .map(ItemMapper::toItemDto)
                 .peek(this::populateItemDto)
                 .collect(Collectors.toList());
@@ -58,7 +64,7 @@ public class ItemService {
 
     public ItemDtoShort add(ItemDto itemDto, long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Item item = toItem(itemDto);
         item.setOwnerId(userId);
@@ -68,12 +74,12 @@ public class ItemService {
 
     public ItemDtoShort update(ItemDto itemDto, long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь по ID " + userId + " не найден");
         }
         Item item = toItem(itemDto);
         Item itemToUpdate = itemRepository.findById(item.getId())
                 .filter(i -> i.getOwnerId() == userId)
-                .orElseThrow(() -> new NotFoundException("Вещь  " + item.getId() + " не найдена!"));
+                .orElseThrow(() -> new NotFoundException("Вещь " + item.getId() + " не найдена!"));
         if (item.getName() != null) {
             itemToUpdate.setName(item.getName());
         }
@@ -97,12 +103,13 @@ public class ItemService {
         }
     }
 
-    public List<ItemDtoShort> search(String text) {
+    public List<ItemDtoShort> search(String text, int from, int size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
         String query = text.toLowerCase();
-        List<Item> items = itemRepository.search(query);
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        Page<Item> items = itemRepository.search(query, page);
         if (items.isEmpty()) {
             throw new NotFoundException("Искомая вещь не найдена!");
         }
@@ -116,12 +123,12 @@ public class ItemService {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь по ID " + userId + " не найден!"));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь по ID" + itemId + " не найдена!"));
-        List<BookingDtoOutcome> bookings = bookingService.getForUser(userId, "PAST").stream()
+                .orElseThrow(() -> new NotFoundException("Вещь по ID " + itemId + " не найдена!"));
+        List<BookingDtoOutcome> bookings = bookingService.getForUser(userId, "PAST", 0, 100).stream()
                 .filter(b -> b.getItem().getId() == itemId)
                 .collect(Collectors.toList());
         if (bookings.isEmpty()) {
-            throw new BadRequestException("Пользователь не может оставить отзыв об этой вещи");
+            throw new BadRequestException("Пользователь " + userId + " не может оставить отзыв о вещи " + itemId);
         }
         Comment comment = toComment(commentDto);
         comment.setAuthor(author);
