@@ -23,12 +23,14 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getById(@PathVariable long userId) {
         log.debug("Принят запрос на отображение пользователя {}", userId);
+
         return userClient.getUser(userId);
     }
 
     @GetMapping
     public ResponseEntity<Object> getUsers() {
         log.debug("Принят запрос на вывод всех пользователей");
+
         return userClient.getAll();
     }
 
@@ -36,19 +38,23 @@ public class UserController {
     @Validated({Marker.OnCreate.class})
     public ResponseEntity<Object> createUser(@RequestBody @Valid UserDto userDto) {
         log.debug("Принят запрос на создание пользователя по имени {}", userDto.getName());
+
         return userClient.add(userDto);
     }
 
     @PatchMapping("/{userId}")
     @Validated({Marker.OnUpdate.class})
-    public ResponseEntity<Object> updateUser(@PathVariable long userId, @RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> updateUser(@PathVariable long userId,
+                                             @RequestBody @Valid UserDto userDto) {
         log.debug("Принят запрос на обновление пользователя {}", userId);
+
         return userClient.update(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable long userId) {
         log.debug("Принят запрос на удаление пользователя {}", userId);
+
         return userClient.delete(userId);
     }
 }

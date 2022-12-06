@@ -32,6 +32,7 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
+
         return get("?from={from}&size={size}", userId, parameters);
     }
 
@@ -41,6 +42,7 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
+
         return get("/search?text={text}&from={from}&size={size}", userId, parameters);
     }
 
@@ -54,12 +56,10 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> update(Long userId, Long itemId, ItemDto itemDto) {
-
         return patch("/" + itemId, userId, itemDto);
     }
 
     public ResponseEntity<Object> delete(Long userId, Long itemId) {
-
         return delete("/" + itemId, userId);
     }
 

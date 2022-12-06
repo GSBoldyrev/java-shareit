@@ -24,7 +24,7 @@ public class RequestController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     public ResponseEntity<Object> addRequest(@RequestHeader("X-Sharer-User-Id") long userId,
-                                     @RequestBody @Valid RequestDto requestDto) {
+                                             @RequestBody @Valid RequestDto requestDto) {
         log.debug("Создание нового запроса от пользователя {}", userId);
 
         return requestClient.add(userId, requestDto);
@@ -39,8 +39,8 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestParam(defaultValue = "0") @Min(0) int from,
-                                           @RequestParam(defaultValue = "100") @Min(1) int size) {
+                                         @RequestParam(defaultValue = "0") @Min(0) int from,
+                                         @RequestParam(defaultValue = "100") @Min(1) int size) {
         log.debug("Вывод всех запросов начиная с {}, по {} запросов на странице", from, size);
 
         return requestClient.getAll(userId, from, size);
@@ -48,7 +48,7 @@ public class RequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                      @PathVariable long requestId) {
+                                          @PathVariable long requestId) {
         log.debug("Вывод запроса {}", requestId);
 
         return requestClient.getById(userId, requestId);

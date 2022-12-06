@@ -27,7 +27,6 @@ public class RequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getForAuthor(long userId) {
-
         return get("", userId);
     }
 
@@ -36,9 +35,9 @@ public class RequestClient extends BaseClient {
                 "from", from,
                 "size", size
         );
+
         return get("/all?from={from}&size={size}", userId, parameters);
     }
-
 
     public ResponseEntity<Object> add(long userId, RequestDto requestDto) {
         return post("", userId, requestDto);

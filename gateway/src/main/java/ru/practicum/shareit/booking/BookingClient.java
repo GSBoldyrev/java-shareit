@@ -33,6 +33,7 @@ public class BookingClient extends BaseClient {
                 "from", from,
                 "size", size
         );
+
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
@@ -42,9 +43,9 @@ public class BookingClient extends BaseClient {
                 "from", from,
                 "size", size
         );
+
         return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
     }
-
 
     public ResponseEntity<Object> bookItem(long userId, BookingDtoIncome requestDto) {
         return post("", userId, requestDto);
@@ -55,7 +56,6 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> approve(long userId, Long bookingId, Boolean approved) {
-
         return patch("/" + bookingId + "?approved=" + approved, userId);
     }
 }

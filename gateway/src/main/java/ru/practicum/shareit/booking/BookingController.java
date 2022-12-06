@@ -56,7 +56,7 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                        @PathVariable long bookingId) {
+                                             @PathVariable long bookingId) {
         log.debug("Заарос на просмотр бронирования {} от пользователя {}", bookingId, userId);
 
         return bookingClient.getBooking(userId, bookingId);
@@ -64,9 +64,10 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> approveBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @PathVariable long bookingId,
-                                            @RequestParam Boolean approved) {
+                                                 @PathVariable long bookingId,
+                                                 @RequestParam Boolean approved) {
         log.debug("Запрос на изменение статуса бронирования {}", bookingId);
+
         return bookingClient.approve(userId, bookingId, approved);
     }
 }

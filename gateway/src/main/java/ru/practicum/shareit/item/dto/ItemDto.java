@@ -8,7 +8,6 @@ import ru.practicum.shareit.misc.Marker;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-
 @Data
 @AllArgsConstructor
 public class ItemDto {

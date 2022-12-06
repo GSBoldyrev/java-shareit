@@ -89,7 +89,6 @@ class BookingControllerTest {
         verifyNoInteractions(client);
     }
 
-
     @Test
     void getBookingsForUserWithWrongFromWithStatusBadRequest() throws Exception {
         mvc.perform(get("/bookings?state=WAITING&from=-2&size=2")
@@ -114,7 +113,6 @@ class BookingControllerTest {
         verifyNoInteractions(client);
     }
 
-
     @Test
     void getBookingsForOwnerWithWrongFromWithStatusBadRequest() throws Exception {
         mvc.perform(get("/bookings/owner?state=WAITING&from=-2&size=2")
@@ -138,5 +136,4 @@ class BookingControllerTest {
 
         verifyNoInteractions(client);
     }
-
 }
