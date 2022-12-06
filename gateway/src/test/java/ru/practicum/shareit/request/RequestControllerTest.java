@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = RequestController.class)
 @AutoConfigureWebMvc
-class ItemRequestControllerTest {
+class RequestControllerTest {
 
     @Autowired
     ObjectMapper mapper;
