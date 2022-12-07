@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoFull;
 
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -32,8 +31,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDtoFull> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestParam(defaultValue = "0") @Min(0) int from,
-                                           @RequestParam(defaultValue = "100") @Min(1) int size) {
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "100") int size) {
         log.debug("Вывод всех запросов начиная с {}, по {} запросов на странице", from, size);
         return service.getAll(userId, from, size);
     }

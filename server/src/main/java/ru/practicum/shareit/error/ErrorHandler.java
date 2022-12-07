@@ -11,8 +11,6 @@ import ru.practicum.shareit.error.exception.ConflictException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.error.model.ErrorResponse;
 
-import javax.validation.ConstraintViolationException;
-
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
@@ -28,14 +26,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
-        log.error("Validation Exception", e);
-
-        return new ErrorResponse(e.getMessage(), "Validation Exception");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ConstraintViolationException e) {
         log.error("Validation Exception", e);
 
         return new ErrorResponse(e.getMessage(), "Validation Exception");

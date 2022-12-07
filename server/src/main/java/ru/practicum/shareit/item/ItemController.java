@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoShort;
 
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -20,8 +19,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId,
-                                  @RequestParam(defaultValue = "0") @Min(0) int from,
-                                  @RequestParam(defaultValue = "100") @Min(1) int size) {
+                                  @RequestParam(defaultValue = "0")  int from,
+                                  @RequestParam(defaultValue = "100") int size) {
         log.debug("Запрос на вывод всех вещей, начиная с {}, по {} на страницу", from, size);
         return service.getAll(userId, from, size);
     }
@@ -34,8 +33,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDtoShort> searchItem(@RequestParam String text,
-                                         @RequestParam(defaultValue = "0") @Min(0) int from,
-                                         @RequestParam(defaultValue = "100") @Min(1) int size) {
+                                         @RequestParam(defaultValue = "0") int from,
+                                         @RequestParam(defaultValue = "100") int size) {
         log.debug("Запрос на поиск вещей, содержащих в названии или описании {}", text);
         return service.search(text, from, size);
     }
